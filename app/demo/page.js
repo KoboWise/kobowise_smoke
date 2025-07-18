@@ -24,6 +24,8 @@ import Link from "next/link";
 import React from "react";
 import { GTB, Kuda, Opay } from "../../assets";
 import { Tab, Tabs } from "@heroui/tabs";
+import { BANK_ACCOUNTS, TRANSACTION_HISTORY } from "./constants";
+import HistoryItem from "../../components/HistoryItem";
 
 export default function DemoPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -155,116 +157,46 @@ export default function DemoPage() {
                 </div>
               </div>
             </Tab>
-            <Tab
-              key='opay'
-              title={
-                <div className='flex items-center space-x-1'>
-                  <Image
-                    src={Opay}
-                    width={12}
-                    height={12}
-                    objectFit='cover'
-                    className='rounded-full size-4'
-                    alt='Opay'
-                  />
-                  <span>Opay</span>
+            {BANK_ACCOUNTS.map((acct) => (
+              <Tab
+                key={acct.key}
+                title={
+                  <div className='flex items-center space-x-1'>
+                    <Image
+                      src={acct.image}
+                      width={12}
+                      height={12}
+                      objectFit='cover'
+                      className='rounded-full size-4'
+                      alt={acct.label}
+                    />
+                    <span>{acct.label}</span>
+                  </div>
+                }
+              >
+                <div>
+                  <span className='text-sm text-foreground-500'>
+                    Total balance
+                  </span>
+                  <div className='flex items-center gap-2'>
+                    <h1 className='font-bold text-2xl'>
+                      ₦{acct.balance.toLocaleString()}
+                    </h1>
+                    <Button
+                      color='primary'
+                      variant='flat'
+                      isIconOnly
+                      aria-label='Eye'
+                      radius='full'
+                      size='sm'
+                      className='size-5'
+                    >
+                      <RiEyeOffFill size={12} />
+                    </Button>
+                  </div>
                 </div>
-              }
-            >
-              <div>
-                <span className='text-sm text-foreground-500'>
-                  Total balance
-                </span>
-                <div className='flex items-center gap-2'>
-                  <h1 className='font-bold text-2xl'>₦40,501.00</h1>
-                  <Button
-                    color='primary'
-                    variant='flat'
-                    isIconOnly
-                    aria-label='Eye'
-                    radius='full'
-                    size='sm'
-                    className='size-5'
-                  >
-                    <RiEyeOffFill size={12} />
-                  </Button>
-                </div>
-              </div>
-            </Tab>
-
-            <Tab
-              key='gtb'
-              title={
-                <div className='flex items-center space-x-1'>
-                  <Image
-                    src={GTB}
-                    width={12}
-                    height={12}
-                    objectFit='cover'
-                    className='rounded-full size-4'
-                    alt='Opay'
-                  />
-                  <span>GTB</span>
-                </div>
-              }
-            >
-              <div>
-                <span className='text-sm text-foreground-500'>
-                  Total balance
-                </span>
-                <div className='flex items-center gap-2'>
-                  <h1 className='font-bold text-2xl'>₦1,000.00</h1>
-                  <Button
-                    color='primary'
-                    variant='flat'
-                    isIconOnly
-                    aria-label='Eye'
-                    radius='full'
-                    size='sm'
-                    className='size-5'
-                  >
-                    <RiEyeOffFill size={12} />
-                  </Button>
-                </div>
-              </div>
-            </Tab>
-
-            <Tab
-              key='kuda'
-              title={
-                <div className='flex items-center space-x-1'>
-                  <Image
-                    src={Kuda}
-                    width={12}
-                    height={12}
-                    objectFit='cover'
-                    className='rounded-full size-4'
-                    alt='Kuda'
-                  />
-                  <span>Kuda</span>
-                </div>
-              }
-            >
-              <div>
-                <span className='text-sm text-foreground-500'>
-                  Total balance
-                </span>
-                <div className='flex items-center gap-2'>
-                  <h1 className='font-bold text-2xl'>₦12,000.00</h1>
-                  <Button
-                    color='primary'
-                    variant='flat'
-                    isIconOnly
-                    aria-label='Eye'
-                    radius='full'
-                    size='sm'
-                    className='size-5'
-                  >
-                    <RiEyeOffFill size={12} />
-                  </Button>
-                </div>
-              </div>
-            </Tab>
+              </Tab>
+            ))}
           </Tabs>
 
           <div className='flex items-center gap-2'>
@@ -303,53 +235,16 @@ export default function DemoPage() {
           </div>
 
           <div className='space-y-6'>
-            <Link
-              href='/demo/transaction-history'
-              className='flex items-center gap-4 justify-between'
-            >
-              <div className='flex items-center gap-2'>
-                <div className='size-10 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center'>
-                  <RiArrowRightUpLine size={14} />
-                </div>
-                <div className='flex flex-col max-w-md gap-1'>
-                  <span className='text-sm'>Transfer to Inioluwa Abiodun</span>
-                  <div className='flex items-center gap-2'>
-                    <Chip size='sm' className='size-5 bg-foreground-100'>
-                      Opay
-                    </Chip>
-                    <Chip size='sm' className='size-5 bg-foreground-100'>
-                      GTB
-                    </Chip>
-                    <span className='text-foreground-500 text-sm'>Jul 15</span>
-                  </div>
-                </div>
-              </div>
-              <span className='text-sm text-green-600'>+ ₦4,000.00</span>
-            </Link>
-
-            <Link
-              href='/demo/transaction-history'
-              className='flex items-center gap-4 justify-between'
-            >
-              <div className='flex items-center gap-2'>
-                <div className='size-10 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center'>
-                  <RiArrowLeftDownLine size={14} />
-                </div>
-                <div className='flex flex-col max-w-md gap-1'>
-                  <span className='text-sm'>Transfer to Inioluwa Abiodun</span>
-                  <div className='flex items-center gap-2'>
-                    <Chip size='sm' className='size-5 bg-foreground-100'>
-                      Opay
-                    </Chip>
-                    <Chip size='sm' className='size-5 bg-foreground-100'>
-                      Kuda
-                    </Chip>
-                    <span className='text-foreground-500 text-sm'>Jul 15</span>
-                  </div>
-                </div>
-              </div>
-              <span className='text-sm text-green-600'>+ ₦2,000.00</span>
-            </Link>
+            {TRANSACTION_HISTORY.map((item) => (
+              <HistoryItem
+                key={item.id}
+                item={item}
+                href={{
+                  pathname: "/demo/transaction-history",
+                  query: { id: item.id },
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>

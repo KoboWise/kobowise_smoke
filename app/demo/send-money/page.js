@@ -3,24 +3,47 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
-import { Avatar, Select, SelectItem } from "@heroui/react";
+import {
+  Avatar,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  Select,
+  SelectItem,
+  Spinner,
+} from "@heroui/react";
 import { RiArrowLeftLine, RiCheckboxCircleFill } from "@remixicon/react";
 import React, { useState } from "react";
 import { Kuda, Moniepoint, Opay, Paystack } from "../../../assets";
-import Image from "next/image";
+import { BANK_ACCOUNTS } from "../constants";
 
 export default function TransferMoneyPage() {
   const [accountNumber, setAccountNumber] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const banks = [
-    { key: "opay", label: "Opay", image: Opay },
-    { key: "kuda", label: "Kuda", image: Kuda },
-    { key: "paystack", label: "Paystack Titan", image: Paystack },
-    { key: "moniepoint", label: "Moniepoint", image: Moniepoint },
-  ];
+  const banks = BANK_ACCOUNTS;
 
   const isFormValid = accountNumber.trim() !== "" && selectedBank !== "";
+
+  React.useEffect(() => {
+    let timer;
+    if (isFormValid) {
+      setLoading(true);
+      setShowConfirmation(false);
+      timer = setTimeout(() => {
+        setLoading(false);
+        setShowConfirmation(true);
+      }, 2000);
+    } else {
+      setLoading(false);
+      setShowConfirmation(false);
+    }
+    return () => clearTimeout(timer);
+  }, [accountNumber, selectedBank]);
 
   return (
     <div className=' space-y-6'>
@@ -52,6 +75,7 @@ export default function TransferMoneyPage() {
           type='num'
           value={accountNumber}
           onValueChange={setAccountNumber}
+          maxLength={10}
         />
 
         <Select
@@ -76,18 +100,27 @@ export default function TransferMoneyPage() {
         </Select>
 
         {/* NAME CONFIRMATION */}
-        {isFormValid && (
-          <div className='p-2 flex items-center gap-2 rounded-md bg-primary-50 text-primary-600'>
-            <RiCheckboxCircleFill />
-            <span className='text-sm'>NOAH DAMILARE AYODELE</span>
-          </div>
-        )}
+        {isFormValid &&
+          (loading ? (
+            <div className='p-2 flex items-center gap-2 rounded-md bg-primary-50 text-primary-600'>
+              <Spinner />
+            </div>
+          ) : (
+            showConfirmation && (
+              <div className='p-2 flex items-center gap-2 rounded-md bg-primary-50 text-primary-600'>
+                <RiCheckboxCircleFill />
+                <span className='text-sm'>NOAH DAMILARE AYODELE</span>
+              </div>
+            )
+          ))}
 
         <Button
           color='primary'
           fullWidth
           radius='full'
           isDisabled={!isFormValid}
+          as={Link}
+          href='/demo/send-money/amount'
         >
           Next
         </Button>

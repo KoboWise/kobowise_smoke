@@ -18,8 +18,15 @@ import React from "react";
 import { Kuda, Opay } from "../../../assets";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { TRANSACTION_HISTORY } from "../constants";
 
 export default function TransactionHistoryPage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const transaction =
+    TRANSACTION_HISTORY.find((t) => String(t.id) === String(id)) ||
+    TRANSACTION_HISTORY[0];
   return (
     <div className=' space-y-6'>
       <header className='p-4 pt-6 flex justify-between items-center gap-4'>
@@ -59,12 +66,15 @@ export default function TransactionHistoryPage() {
 
               <div className='flex flex-col items-center'>
                 <span className='text-sm text-foreground-500'>
-                  Transfer to Inioluwa Abiodun
+                  {transaction.title}
                 </span>
-                <span className='font-bold'>₦2,400.00</span>
+                <span className='font-bold'>
+                  ₦{transaction.amount.toLocaleString()}
+                </span>
               </div>
               <Chip color='success' variant='flat' size='sm'>
-                Success
+                {transaction.status.charAt(0).toUpperCase() +
+                  transaction.status.slice(1)}
               </Chip>
             </div>
             <div className='flex gap-4 flex-col'>
@@ -72,7 +82,9 @@ export default function TransactionHistoryPage() {
                 <span className='text-foreground-500 text-sm'>
                   Transaction Amount
                 </span>
-                <span className='max-w-xs text-xs text-right'>₦2,400.00</span>
+                <span className='max-w-xs text-xs text-right'>
+                  ₦{transaction.amount.toLocaleString()}
+                </span>
               </div>
 
               <div className='flex items-center justify-between gap-8'>
@@ -84,7 +96,9 @@ export default function TransactionHistoryPage() {
                 <span className='text-foreground-500 text-xs'>
                   Total Amount
                 </span>
-                <span className='max-w-xs text-xs text-right'>₦2,400.00</span>
+                <span className='max-w-xs text-xs text-right'>
+                  ₦{transaction.amount.toLocaleString()}
+                </span>
               </div>
             </div>
           </CardBody>
