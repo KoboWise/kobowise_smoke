@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: var(--font-satoshi);
+}
+
+/* Custom tab styling for active state - more specific selectors */
+[data-selected="true"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+    box-shadow: none;
+}
+
+/* Target the tab button specifically */
+[role="tab"][data-selected="true"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+}
+
+/* Alternative approach using Tailwind classes if the above doesn't work */
+.tab-selected {
+    @apply bg-foreground-100 text-foreground-900;
+}
+
+/* Force override for HeroUI tabs */
+[data-slot="tab"][data-selected="true"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+}
+
+/* Additional selectors for HeroUI tabs */
+[data-selected="true"][data-slot="tab"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+}
+
+/* Target the cursor element */
+[data-slot="cursor"] {
+    background-color: hsl(var(--foreground-100)) !important;
+}
+
+/* Force override with higher specificity */
+div[data-selected="true"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+}
+
+/* Custom tabs class */
+.custom-tabs [data-selected="true"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    color: hsl(var(--foreground-900)) !important;
+
+}
+
+.custom-tabs [data-slot="cursor"] {
+    background-color: hsl(var(--foreground-100)) !important;
+    box-shadow: none;
+}
