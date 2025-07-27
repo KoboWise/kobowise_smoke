@@ -2,7 +2,7 @@
 
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
-import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import {
   Drawer,
   DrawerBody,
@@ -10,11 +10,9 @@ import {
   DrawerFooter,
   DrawerHeader,
 } from "@heroui/drawer";
-import { Chip, useDisclosure } from "@heroui/react";
+import { useDisclosure } from "@heroui/react";
+import { Tab, Tabs } from "@heroui/tabs";
 import {
-  RiAddLine,
-  RiArrowDownLine,
-  RiArrowLeftDownLine,
   RiArrowRightUpLine,
   RiCopperCoinFill,
   RiEyeOffFill,
@@ -22,13 +20,45 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { GTB, Kuda, Opay } from "../../assets";
-import { Tab, Tabs } from "@heroui/tabs";
-import { BANK_ACCOUNTS, TRANSACTION_HISTORY } from "./constants";
 import HistoryItem from "../../components/HistoryItem";
+import { BANK_ACCOUNTS, TRANSACTION_HISTORY } from "./constants";
 
 export default function DemoPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedAccount, setSelectedAccount] = React.useState(null);
+  const [selectedTab, setSelectedTab] = React.useState("kobowise");
+  const [hiddenBalances, setHiddenBalances] = React.useState({
+    total: false,
+    ...BANK_ACCOUNTS.reduce((acc, account) => {
+      acc[account.key] = false;
+      return acc;
+    }, {}),
+  });
+
+  // Calculate total balance from all bank accounts
+  const totalBalance = BANK_ACCOUNTS.reduce(
+    (sum, account) => sum + account.balance,
+    0
+  );
+
+  const toggleBalanceVisibility = (key) => {
+    setHiddenBalances((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const formatBalance = (balance, key) => {
+    if (hiddenBalances[key]) {
+      return "••••••";
+    }
+    return `₦${balance.toLocaleString()}`;
+  };
+
+  const handleViewDetails = (account) => {
+    setSelectedAccount(account);
+    onOpen();
+  };
 
   return (
     <>
@@ -38,58 +68,59 @@ export default function DemoPage() {
           {(onClose) => (
             <>
               <DrawerHeader className='flex items-center gap-1'>
-                <Image
-                  src={Opay}
-                  width={24}
-                  height={24}
-                  objectFit='cover'
-                  className='rounded-full'
-                  alt='Opay'
-                />{" "}
-                Opay
+                {selectedAccount && (
+                  <>
+                    <Image
+                      src={selectedAccount.image}
+                      width={24}
+                      height={24}
+                      objectFit='cover'
+                      className='rounded-full'
+                      alt={selectedAccount.label}
+                    />
+                    {selectedAccount.label}
+                  </>
+                )}
               </DrawerHeader>
               <DrawerBody className='flex flex-col gap-6'>
-                <Card className='min-w-fit shadow-none bg-foreground-50'>
-                  <CardHeader>
-                    <div className='flex items-center px-2 py-1 rounded-full bg-foreground-200'>
-                      <span className='text-sm'>******2567</span>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <h1 className='text-xl font-semibold'>₦0.00</h1>
-                  </CardBody>
-                </Card>
-
-                <div className='space-y-4'>
-                  <span className='font-semibold text-sm'>
-                    Transaction History
-                  </span>
-
-                  <div className='flex items-center gap-4 justify-between'>
-                    <div className='flex items-center gap-2'>
-                      <div className='size-10 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center'>
-                        <RiArrowRightUpLine size={14} />
-                      </div>
-                      <div className='flex flex-col max-w-md gap-1'>
-                        <span className='text-sm'>
-                          Transfer to Inioluwa Abiodun
-                        </span>
-                        <div className='flex items-center gap-2'>
-                          <Chip size='sm' className='size-5 bg-foreground-100'>
-                            Opay
-                          </Chip>
-                          <Chip size='sm' className='size-5 bg-foreground-100'>
-                            GTB
-                          </Chip>
-                          <span className='text-foreground-500 text-sm'>
-                            Jul 15
+                {selectedAccount && (
+                  <>
+                    <Card className='min-w-fit shadow-none bg-foreground-50'>
+                      <CardHeader>
+                        <div className='flex items-center px-2 py-1 rounded-full bg-foreground-200'>
+                          <span className='text-sm'>
+                            ******{selectedAccount.accountNumber.slice(-4)}
                           </span>
                         </div>
+                      </CardHeader>
+                      <CardBody>
+                        <h1 className='text-xl font-semibold'>
+                          ₦{selectedAccount.balance.toLocaleString()}
+                        </h1>
+                      </CardBody>
+                    </Card>
+
+                    <div className='space-y-4'>
+                      <span className='font-semibold text-sm'>
+                        Transaction History
+                      </span>
+
+                      <div className='space-y-4'>
+                        {selectedAccount.history.map((item) => (
+                          <HistoryItem
+                            key={item.id}
+                            item={item}
+                            // href={{
+                            //   pathname: "/demo/transaction-history",
+                            //   query: { id: item.id },
+                            // }}
+                            oneBank
+                          />
+                        ))}
                       </div>
                     </div>
-                    <span className='text-sm text-green-600'>+ ₦4,000.00</span>
-                  </div>
-                </div>
+                  </>
+                )}
               </DrawerBody>
               <DrawerFooter>
                 <Button color='primary' onPress={onClose}>
@@ -101,31 +132,27 @@ export default function DemoPage() {
         </DrawerContent>
       </Drawer>
 
-      <div className='py-4 space-y-8'>
+      <div className='py-4 space-y-6 max-w-5xl mx-auto w-full'>
         <header className='flex items-center justify-between pt-6 px-4'>
           <div className='flex items-center gap-1'>
             <RiCopperCoinFill />
             <h1 className='font-bold text-lg'>KoboWise</h1>
           </div>
-          <Avatar
-            name='NA'
-            src='https://quess-prototype.vercel.app/Moshood.jpg'
-            className='w-8 h-8'
-          />
+          <Avatar name='NA' className='w-8 h-8' />
         </header>
 
-        <div className='space-y-2 px-4'>
+        <div className='space-y-2 px-4 max-w-[100vw]'>
           <Tabs
             variant='light'
             radius='full'
             size='sm'
-            className='custom-tabs relative'
+            className='custom-tabs w-full'
+            selectedKey={selectedTab}
+            onSelectionChange={setSelectedTab}
             classNames={{
               tab: "data-[selected=true]:!bg-foreground-100 data-[selected=true]:!text-foreground-900",
-              tabContent:
-                "data-[selected=true]:!bg-foreground-100 data-[selected=true]:!text-foreground-900 ",
-              cursor: "!bg-foreground-100",
-              tabList: "bg-transparent",
+
+              tabList: "overflow-x-scroll w-full",
             }}
           >
             <Tab
@@ -142,7 +169,9 @@ export default function DemoPage() {
                   Total available balance
                 </span>
                 <div className='flex items-center gap-2'>
-                  <h1 className='font-bold text-2xl'>₦53,501.00</h1>
+                  <h1 className='font-bold text-2xl'>
+                    {formatBalance(totalBalance, "total")}
+                  </h1>
                   <Button
                     color='primary'
                     variant='flat'
@@ -151,6 +180,7 @@ export default function DemoPage() {
                     radius='full'
                     size='sm'
                     className='size-5'
+                    onPress={() => toggleBalanceVisibility("total")}
                   >
                     <RiEyeOffFill size={12} />
                   </Button>
@@ -161,15 +191,16 @@ export default function DemoPage() {
               <Tab
                 key={acct.key}
                 title={
-                  <div className='flex items-center space-x-1'>
+                  <div className='flex items-center gap-1 pr-4'>
                     <Image
                       src={acct.image}
-                      width={12}
-                      height={12}
+                      width={16}
+                      height={16}
                       objectFit='cover'
-                      className='rounded-full size-4'
+                      className='rounded-full'
                       alt={acct.label}
                     />
+
                     <span>{acct.label}</span>
                   </div>
                 }
@@ -180,7 +211,7 @@ export default function DemoPage() {
                   </span>
                   <div className='flex items-center gap-2'>
                     <h1 className='font-bold text-2xl'>
-                      ₦{acct.balance.toLocaleString()}
+                      {formatBalance(acct.balance, acct.key)}
                     </h1>
                     <Button
                       color='primary'
@@ -190,6 +221,7 @@ export default function DemoPage() {
                       radius='full'
                       size='sm'
                       className='size-5'
+                      onPress={() => toggleBalanceVisibility(acct.key)}
                     >
                       <RiEyeOffFill size={12} />
                     </Button>
@@ -211,15 +243,25 @@ export default function DemoPage() {
               Send
             </Button>
 
-            <Button
-              color='default'
-              variant='bordered'
-              size='sm'
-              radius='full'
-              onPress={onOpen}
-            >
-              View Details
-            </Button>
+            {selectedTab !== "kobowise" && (
+              <Button
+                color='default'
+                variant='bordered'
+                size='sm'
+                radius='full'
+                onPress={() => {
+                  // Find the account that matches the selected tab
+                  const currentAccount = BANK_ACCOUNTS.find(
+                    (acct) => acct.key === selectedTab
+                  );
+                  if (currentAccount) {
+                    handleViewDetails(currentAccount);
+                  }
+                }}
+              >
+                View Details
+              </Button>
+            )}
             <Button color='default' variant='bordered' size='sm' radius='full'>
               Add Account
             </Button>

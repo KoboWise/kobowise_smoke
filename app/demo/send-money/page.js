@@ -3,21 +3,11 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
-import {
-  Avatar,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  Select,
-  SelectItem,
-  Spinner,
-} from "@heroui/react";
+import { Select, SelectItem, Spinner } from "@heroui/react";
 import { RiArrowLeftLine, RiCheckboxCircleFill } from "@remixicon/react";
 import React, { useState } from "react";
-import { Kuda, Moniepoint, Opay, Paystack } from "../../../assets";
-import { BANK_ACCOUNTS } from "../constants";
+import HistoryItem from "../../../components/HistoryItem";
+import { BANK_ACCOUNTS, TRANSACTION_HISTORY } from "../constants";
 
 export default function TransferMoneyPage() {
   const [accountNumber, setAccountNumber] = useState("");
@@ -120,7 +110,7 @@ export default function TransferMoneyPage() {
           radius='full'
           isDisabled={!isFormValid}
           as={Link}
-          href='/demo/send-money/amount'
+          href={`/demo/send-money/amount?accountNumber=${accountNumber}&bank=${selectedBank}`}
         >
           Next
         </Button>
@@ -129,36 +119,17 @@ export default function TransferMoneyPage() {
       <div className='p-4 border-t border-foreground-100 space-y-6'>
         <span className='font-semibold'>Recent</span>
 
-        <div className='flex flex-col gap-4'>
-          <Link href='/' className='flex items-center gap-2'>
-            <Avatar src='https://cdn-1.webcatalog.io/catalog/kuda/kuda-icon-filled-256.webp?v=1750639062630' />
-            <div className='flex flex-col max-w-md gap-1'>
-              <span className='text-sm text-foreground-900'>
-                Inioluwa Abiodun
-              </span>
-              <div className='flex items-center gap-2'>
-                <span className='text-foreground-500 text-sm'>9550152944</span>
-                <span className='text-foreground-500 text-sm'>Kuda</span>
-              </div>
-            </div>
-          </Link>
-
-          <Link href='/' className='flex items-center gap-2'>
-            <Avatar
-              className='border border-foreground-100'
-              src='https://play-lh.googleusercontent.com/ArowgQs3NWtBgXbtJT67dHR9gMvNq6IZyssJCDKtxh-_qsKQlRrmBQy3Fq2Pdw0RSkE=w480-h960-rw'
-            />
-            <div className='flex flex-col max-w-md gap-1'>
-              <span className='text-sm text-foreground-900'>
-                Adedoyin Adebayo
-              </span>
-              <div className='flex items-center gap-2'>
-                <span className='text-foreground-500 text-sm'>8023562567</span>
-                <span className='text-foreground-500 text-sm'>Opay</span>
-              </div>
-            </div>
-          </Link>
-        </div>
+        {TRANSACTION_HISTORY.map((item) => (
+          <HistoryItem
+            key={item.id}
+            item={item}
+            href={{
+              pathname: "/demo/transaction-history",
+              query: { id: item.id },
+            }}
+            hasImage
+          />
+        ))}
       </div>
     </div>
   );

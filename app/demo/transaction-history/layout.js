@@ -1,3 +1,5 @@
+"use client";
+
 import { Spinner } from "@heroui/react";
 import React, { Suspense } from "react";
 

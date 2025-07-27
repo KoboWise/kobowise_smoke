@@ -61,7 +61,11 @@ export default function TransactionHistoryPage() {
           <CardBody className='space-y-4'>
             <div className='flex flex-col items-center gap-2'>
               <div className='size-10 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center'>
-                <RiArrowRightUpLine size={16} />
+                {transaction.type === "outgoing" ? (
+                  <RiArrowRightUpLine size={16} />
+                ) : (
+                  <RiArrowLeftDownLine size={16} />
+                )}
               </div>
 
               <div className='flex flex-col items-center'>
