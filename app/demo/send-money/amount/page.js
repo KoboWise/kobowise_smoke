@@ -26,7 +26,7 @@ import {
 } from "@remixicon/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Opay } from "../../../../assets";
 import OpayImg from "@/assets/images/opay.jpeg";
@@ -36,7 +36,7 @@ import { InputOtp } from "@heroui/input-otp";
 import { Spinner } from "@heroui/spinner";
 import { BANK_ACCOUNTS } from "../../constants";
 
-export default function AmountPage() {
+function AmountPageContent() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const searchParams = useSearchParams();
   // step: 'allocation' | 'review' | 'otp' | 'success'
@@ -413,6 +413,20 @@ export default function AmountPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AmountPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className='flex items-center justify-center min-h-screen'>
+          <Spinner size='lg' />
+        </div>
+      }
+    >
+      <AmountPageContent />
+    </Suspense>
   );
 }
 
