@@ -31,6 +31,36 @@ const satoshi = localFont({
   ],
   variable: "--font-satoshi",
 });
+const aeonik = localFont({
+  src: [
+    {
+      path: "../assets/fonts/Aeonik-Regular.otf",
+      weight: "400",
+      style: "normal",
+  
+    },
+    {
+      path: "../assets/fonts/Aeonik-Medium.otf",
+      weight: "500",
+      style: "medium",
+      
+    },
+    {
+      path: "../assets/fonts/Aeonik-Bold.otf",
+      weight: "700",
+      style: "bold",
+    
+    },
+    {
+      path: "../assets/fonts/Aeonik-Black.otf",
+      weight: "800",
+      style: "bold",
+    
+    },
+  ],
+  variable: "--font-aeonik",
+});
+
 
 export const metadata: Metadata = {
   title: {
@@ -59,7 +89,7 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head />
       <body
-        className={`${satoshi.variable}  antialiased min-h-screen text-foreground bg-background`}
+        className={`${aeonik.variable}  antialiased min-h-screen text-foreground bg-background`}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
         {children}

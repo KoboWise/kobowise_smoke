@@ -3,8 +3,26 @@
 @tailwind utilities;
 
 body {
-    font-family: var(--font-satoshi);
+    font-family: var(--font-aeonik);
 }
+
+/* Hero section masking */
+/* .hero-section {
+    clip-path: polygon(0 0,
+            100% 0,
+            100% 75%,
+            80% 100%,
+            0 100%);
+    position: relative;
+}
+
+.hero-background {
+    clip-path: polygon(0 0,
+            100% 0,
+            100% 75%,
+            80% 100%,
+            0 100%);
+} */
 
 /* Custom tab styling for active state - more specific selectors */
 [data-selected="true"] {
