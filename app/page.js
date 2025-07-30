@@ -19,6 +19,98 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { RiInstagramFill } from "@remixicon/react";
 import Link from "next/link";
+import { motion, useInView, useAnimation } from "framer-motion";
+import { useRef } from "react";
+
+// Custom hook for scroll animations
+const useScrollAnimation = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, margin: "-100px" });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    } else {
+      controls.start("hidden");
+    }
+  }, [isInView, controls]);
+
+  return { ref, controls, isInView };
+};
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+    },
+  },
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+    },
+  },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemAnimation = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,7 +127,10 @@ export default function Home() {
 
   return (
     <div>
-      <header
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed w-full top-0 z-50 transition-all duration-300 ${
           isScrolled ? "bg-neutral-950" : "bg-transparent"
         }`}
@@ -51,23 +146,37 @@ export default function Home() {
             Try Demo
           </Button>
         </nav>
-      </header>
+      </motion.header>
 
       <main className='md:space-y-32 space-y-24 '>
         {/* HERO SECTION */}
         <section className='h-screen pt-24 bg-gradient-to-br from-primary-900 to-neutral-950 text-foreground-50'>
           <div className='w-full h-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-0 items-center relative z-10 px-4'>
-            <div className='max-w-xl space-y-4 md:space-y-8'>
-              <h1 className='text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-foreground-400'>
+            <motion.div
+              initial='hidden'
+              animate='visible'
+              variants={fadeInUp}
+              className='max-w-xl space-y-4 md:space-y-8'
+            >
+              <motion.h1
+                variants={itemAnimation}
+                className='text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-foreground-400'
+              >
                 One App, All Your Banks
-              </h1>
-              <p className='text-foreground-300 text-sm md:text-base md:font-medium'>
+              </motion.h1>
+              <motion.p
+                variants={itemAnimation}
+                className='text-foreground-300 text-sm md:text-base md:font-medium'
+              >
                 Connect multiple banks and wallets like Opay, Kuda, GTB, and
                 more. Make smart payments with AI-powered insights and seamless
                 transactions.
-              </p>
+              </motion.p>
 
-              <div className='flex gap-4 items-center'>
+              <motion.div
+                variants={itemAnimation}
+                className='flex gap-4 items-center'
+              >
                 <Button
                   color='primary'
                   as={Link}
@@ -84,10 +193,15 @@ export default function Home() {
                 >
                   Join Waitlist
                 </Button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className='w-full pt-4 md:p-0 h-full overflow-hidden flex flex-col md:flex-row justify-end items-center md:items-start'>
+            <motion.div
+              initial='hidden'
+              animate='visible'
+              variants={fadeInRight}
+              className='w-full pt-4 md:p-0 h-full overflow-hidden flex flex-col md:flex-row justify-end items-center md:items-start'
+            >
               <Image
                 src={HeroImage}
                 alt='hero image'
@@ -96,25 +210,46 @@ export default function Home() {
                 objectFit='contain'
                 className='w-fit h-full object-contain'
               />
-            </div>
+            </motion.div>
           </div>
 
-          <Image
-            src={Curve2}
-            alt='background image'
-            width={1000}
-            height={2500}
-            className='z-10 absolute object-contain bottom-0 w-full '
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+          >
+            <Image
+              src={Curve2}
+              alt='background image'
+              width={1000}
+              height={2500}
+              className='z-10 absolute object-contain bottom-0 w-full hidden md:block'
+            />
+          </motion.div>
         </section>
 
-        <section className='max-w-6xl mx-auto space-y-16 p-4'>
-          <h2 className='text-4xl md:text-5xl font-bold text-foreground-900 max-w-xl'>
+        <motion.section
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: false, margin: "-100px" }}
+          variants={staggerContainer}
+          className='max-w-6xl mx-auto space-y-16 p-4'
+        >
+          <motion.h2
+            variants={itemAnimation}
+            className='text-4xl md:text-5xl font-bold text-foreground-900 max-w-xl'
+          >
             Why Choose KoboWise?
-          </h2>
+          </motion.h2>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='bg-primary-600 p-8 rounded-md col-span-1 md:col-span-2'>
+          <motion.div
+            variants={staggerContainer}
+            className='grid grid-cols-1 md:grid-cols-2 gap-4'
+          >
+            <motion.div
+              variants={itemAnimation}
+              className='bg-primary-600 p-8 rounded-md col-span-1 md:col-span-2'
+            >
               <div className='space-y-4'>
                 <div className='space-y-1'>
                   <h3 className='text-xl font-bold text-foreground-50'>
@@ -132,9 +267,12 @@ export default function Home() {
                   Try it out
                 </Button>
               </div>
-            </div>
+            </motion.div>
 
-            <div className='bg-neutral-100 p-8 rounded-md'>
+            <motion.div
+              variants={itemAnimation}
+              className='bg-neutral-100 p-8 rounded-md'
+            >
               <div className='space-y-2'>
                 <h3 className='text-xl font-bold text-foreground-900'>
                   Smart Payments
@@ -145,9 +283,12 @@ export default function Home() {
                   transaction.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className='bg-neutral-900 p-8 rounded-md'>
+            <motion.div
+              variants={itemAnimation}
+              className='bg-neutral-900 p-8 rounded-md'
+            >
               <div className='space-y-2'>
                 <h3 className='text-xl font-bold text-foreground-50'>
                   Bank-Level Security
@@ -157,192 +298,102 @@ export default function Home() {
                   detection keep your money and data completely secure.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
+            </motion.div>
+          </motion.div>
+        </motion.section>
 
-        <section className='space-y-24 bg-gradient-to-br from-primary-900 via-secondary-900 to-neutral-950 text-foreground-50 py-16 px-4 md:py-24'>
+        <motion.section
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: false, margin: "-100px" }}
+          variants={staggerContainer}
+          className='space-y-24 bg-gradient-to-br from-primary-900 via-secondary-900 to-neutral-950 text-foreground-50 py-16 px-4 md:py-24'
+        >
           <div className='max-w-6xl mx-auto space-y-8 md:space-y-16 flex flex-col items-center'>
-            <h2 className='text-2xl md:text-4xl font-bold text-foreground-50 max-w-xl text-center w-full'>
+            <motion.h2
+              variants={itemAnimation}
+              className='text-2xl md:text-4xl font-bold text-foreground-50 max-w-xl text-center w-full'
+            >
               Supported Banks & Wallets
-            </h2>
+            </motion.h2>
 
-            <div className='h-16 bg-gradient-to-b from-[#f0f2f533] to-tranparent w-0.5' />
+            <motion.div
+              variants={itemAnimation}
+              className='h-16 bg-gradient-to-b from-[#f0f2f533] to-tranparent w-0.5'
+            />
 
-            <div className='flex gap-4 flex-wrap justify-center'>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Opay}
-                    alt='opay'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Opay
-              </Chip>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Kuda}
-                    alt='kuda'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Kuda
-              </Chip>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={GTB}
-                    alt='gtb'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Guaranty Trust Bank
-              </Chip>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Paystack}
-                    alt='paystack'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Paystack Titan
-              </Chip>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Moniepoint}
-                    alt='moniepoint'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Moniepoint
-              </Chip>
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={PalmPay}
-                    alt='palmpay'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                PalmPay
-              </Chip>
+            <motion.div
+              variants={staggerContainer}
+              className='flex gap-4 flex-wrap justify-center'
+            >
+              {[
+                { src: Opay, alt: "opay", name: "Opay" },
+                { src: Kuda, alt: "kuda", name: "Kuda" },
+                { src: GTB, alt: "gtb", name: "Guaranty Trust Bank" },
+                { src: Paystack, alt: "paystack", name: "Paystack Titan" },
+                { src: Moniepoint, alt: "moniepoint", name: "Moniepoint" },
+                { src: PalmPay, alt: "palmpay", name: "PalmPay" },
+                { src: Carbon, alt: "carbon", name: "Carbon" },
+                { src: Uba, alt: "uba", name: "United Bank for Africa" },
+                { src: Wema, alt: "wema", name: "Wema Bank" },
+              ].map((bank, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemAnimation}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Chip
+                    variant='faded'
+                    color='primary'
+                    size='lg'
+                    className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
+                    startContent={
+                      <Image
+                        src={bank.src}
+                        alt={bank.alt}
+                        width={20}
+                        height={20}
+                        className='rounded-full'
+                      />
+                    }
+                  >
+                    {bank.name}
+                  </Chip>
+                </motion.div>
+              ))}
+            </motion.div>
 
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Carbon}
-                    alt='carbon'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Carbon
-              </Chip>
-
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Uba}
-                    alt='uba'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                United Bank for Africa
-              </Chip>
-
-              <Chip
-                variant='faded'
-                color='primary'
-                size='lg'
-                className='bg-transparent border-1 border-[#f0f2f533] text-foreground-50'
-                startContent={
-                  <Image
-                    src={Wema}
-                    alt='wema'
-                    width={20}
-                    height={20}
-                    className='rounded-full'
-                  />
-                }
-              >
-                Wema Bank
-              </Chip>
-            </div>
-
-            <span className='text-foreground-500 text-sm text-center'>
+            <motion.span
+              variants={itemAnimation}
+              className='text-foreground-500 text-sm text-center'
+            >
               20+ banks and wallets supported | More being added every month
-            </span>
+            </motion.span>
           </div>
-        </section>
+        </motion.section>
 
         {/* FEATURES SECTION */}
-        <section className='max-w-6xl mx-auto space-y-16 py-24'>
+        <motion.section
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: false, margin: "-100px" }}
+          variants={staggerContainer}
+          className='max-w-6xl mx-auto space-y-16 py-24'
+        >
           <FeaturesTabs />
-        </section>
+        </motion.section>
 
         <footer>
-          <section className='bg-gradient-to-b from-primary-800 to-neutral-950 text-foreground-50'>
+          <motion.section
+            initial='hidden'
+            whileInView='visible'
+            viewport={{ once: false, margin: "-100px" }}
+            variants={staggerContainer}
+            className='bg-gradient-to-b from-primary-800 to-neutral-950 text-foreground-50'
+          >
             <div className='max-w-6xl mx-auto space-y-16 flex flex-col items-center py-16'>
-              <div className='space-y-4'>
+              <motion.div variants={itemAnimation} className='space-y-4'>
                 <h2 className='text-4xl font-bold text-foreground-50 max-w-xl text-center w-full'>
                   Join the waitlist
                 </h2>
@@ -350,33 +401,53 @@ export default function Home() {
                 <p className='text-foreground-500 text-center w-full'>
                   Be the first to know when we launch
                 </p>
-              </div>
+              </motion.div>
 
-              <Button
-                color='primary'
-                size='lg'
-                className='bg-[#f0f2f533] border-2 border-[#f0f2f533] text-foreground-50'
+              <motion.div
+                variants={itemAnimation}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Join Waitlist
-              </Button>
+                <Button
+                  color='primary'
+                  size='lg'
+                  className='bg-[#f0f2f533] border-2 border-[#f0f2f533] text-foreground-50'
+                >
+                  Join Waitlist
+                </Button>
+              </motion.div>
             </div>
-          </section>
+          </motion.section>
 
-          <section className=' space-y-16 border-t-1 border-[#f0f2f533] bg-neutral-950 py-16'>
+          <motion.section
+            initial='hidden'
+            whileInView='visible'
+            viewport={{ once: false, margin: "-100px" }}
+            variants={staggerContainer}
+            className=' space-y-16 border-t-1 border-[#f0f2f533] bg-neutral-950 py-16'
+          >
             <div className='max-w-6xl mx-auto space-y-4'>
-              <div className='flex flex-col md:flex-row items-center gap-2 justify-between w-full'>
+              <motion.div
+                variants={itemAnimation}
+                className='flex flex-col md:flex-row items-center gap-2 justify-between w-full'
+              >
                 <span className='text-foreground-50 font-bold text-2xl'>
                   KoboWise
                 </span>
                 <div className='flex flex-col items-center md:items-end gap-2'>
-                  <Button
-                    isIconOnly
-                    variant='flat'
-                    color='primary'
-                    radius='full'
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    <RiInstagramFill />
-                  </Button>
+                    <Button
+                      isIconOnly
+                      variant='flat'
+                      color='primary'
+                      radius='full'
+                    >
+                      <RiInstagramFill />
+                    </Button>
+                  </motion.div>
                   <a
                     href='mailto:info@kobowise.com'
                     target='_blank'
@@ -386,16 +457,19 @@ export default function Home() {
                     info@kobowise.com
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className='flex flex-col md:flex-row items-center gap-2 justify-center'>
+              <motion.div
+                variants={itemAnimation}
+                className='flex flex-col md:flex-row items-center gap-2 justify-center'
+              >
                 <span className='text-foreground-500'>
                   © {new Date().getFullYear()}
                 </span>
                 <span className='text-foreground-500'>All rights reserved</span>
-              </div>
+              </motion.div>
             </div>
-          </section>
+          </motion.section>
         </footer>
       </main>
     </div>
@@ -462,24 +536,39 @@ function FeaturesTabs() {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start p-4'>
       {/* left side - Content */}
-      <div className='space-y-8 col-span-1 md:col-span-2'>
-        <h2 className='text-3xl md:text-5xl font-bold text-foreground-900'>
+      <motion.div
+        initial='hidden'
+        whileInView='visible'
+        viewport={{ once: false, margin: "-100px" }}
+        variants={fadeInLeft}
+        className='space-y-8 col-span-1 md:col-span-2'
+      >
+        <motion.h2
+          variants={itemAnimation}
+          className='text-3xl md:text-5xl font-bold text-foreground-900'
+        >
           How smart payment work
-        </h2>
+        </motion.h2>
 
         {/* Progress bar */}
-        <div className='relative w-full h-1 bg-gray-200 rounded-full overflow-hidden'>
-          <div
+        <motion.div
+          variants={itemAnimation}
+          className='relative w-full h-1 bg-gray-200 rounded-full overflow-hidden'
+        >
+          <motion.div
             className='h-full bg-primary-600 transition-all duration-75 ease-linear'
             style={{ width: `${progress}%` }}
           />
-        </div>
+        </motion.div>
 
         {/* Tab list */}
-        <div className='space-y-2'>
+        <motion.div variants={staggerContainer} className='space-y-2'>
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={itemAnimation}
+              whileHover={{ x: 10 }}
+              transition={{ duration: 0.2 }}
               className='border border-gray-200 rounded-lg overflow-hidden'
             >
               <button
@@ -511,7 +600,13 @@ function FeaturesTabs() {
 
               {/* Accordion content */}
               {index === activeTab && (
-                <div className='px-6 pb-6 bg-primary-50 border-t border-primary-100'>
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className='px-6 pb-6 bg-primary-50 border-t border-primary-100'
+                >
                   <div className='pt-4 space-y-4'>
                     <p className='text-foreground-600 leading-relaxed'>
                       {feature.description}
@@ -524,20 +619,32 @@ function FeaturesTabs() {
                       Learn More
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Right side - Image */}
-      <div className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden col-span-1 '>
-        <div className='absolute inset-0 flex items-center justify-center'>
+      <motion.div
+        initial='hidden'
+        whileInView='visible'
+        viewport={{ once: false, margin: "-100px" }}
+        variants={fadeInRight}
+        className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden col-span-1 '
+      >
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className='absolute inset-0 flex items-center justify-center'
+        >
           <div className='text-8xl'>{features[activeTab].icon}</div>
-        </div>
+        </motion.div>
         <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent'></div>
-      </div>
+      </motion.div>
     </div>
   );
 }
