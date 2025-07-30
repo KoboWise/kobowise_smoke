@@ -18,14 +18,33 @@ import { Chip } from "@heroui/chip";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { RiInstagramFill } from "@remixicon/react";
+import Link from "next/link";
 
 export default function Home() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div>
-      <header className='fixed w-full top-0 z-50'>
+      <header
+        className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-neutral-950" : "bg-transparent"
+        }`}
+      >
         <nav className='flex justify-between items-center p-4 max-w-6xl mx-auto'>
           <h1 className='text-xl font-medium text-foreground-50'>KoboWise</h1>
           <Button
+            as={Link}
+            href='/demo'
             color='primary'
             className='bg-[#f0f2f533] border-2 border-[#f0f2f533] text-foreground-50'
           >
@@ -34,15 +53,15 @@ export default function Home() {
         </nav>
       </header>
 
-      <main className='space-y-32 h-[300vh] '>
+      <main className='md:space-y-32 space-y-24 '>
         {/* HERO SECTION */}
         <section className='h-screen pt-24 bg-gradient-to-br from-primary-900 to-neutral-950 text-foreground-50'>
-          <div className='w-full h-full max-w-6xl mx-auto grid grid-cols-2 items-center relative z-10'>
-            <div className='max-w-xl space-y-8'>
-              <h1 className='text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-foreground-400'>
+          <div className='w-full h-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-0 items-center relative z-10 px-4'>
+            <div className='max-w-xl space-y-4 md:space-y-8'>
+              <h1 className='text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-foreground-400'>
                 One App, All Your Banks
               </h1>
-              <p className='text-foreground-300 font-medium'>
+              <p className='text-foreground-300 text-sm md:text-base md:font-medium'>
                 Connect multiple banks and wallets like Opay, Kuda, GTB, and
                 more. Make smart payments with AI-powered insights and seamless
                 transactions.
@@ -51,29 +70,31 @@ export default function Home() {
               <div className='flex gap-4 items-center'>
                 <Button
                   color='primary'
+                  as={Link}
+                  href='/demo'
                   size='lg'
-                  className='border-2 border-primary-400'
+                  className='border-2 border-primary-400 md:w-fit w-full'
                 >
                   Try Demo
                 </Button>
                 <Button
                   color='primary'
                   size='lg'
-                  className='bg-[#f0f2f533] border-2 border-[#f0f2f533] text-foreground-50'
+                  className='bg-[#f0f2f533] border-2 border-[#f0f2f533] text-foreground-50 md:w-fit w-full'
                 >
                   Join Waitlist
                 </Button>
               </div>
             </div>
 
-            <div className='w-full h-full overflow-hidden flex justify-end items-start'>
+            <div className='w-full pt-4 md:p-0 h-full overflow-hidden flex flex-col md:flex-row justify-end items-center md:items-start'>
               <Image
                 src={HeroImage}
                 alt='hero image'
                 width={500}
                 height={500}
                 objectFit='contain'
-                className='w-full h-full object-contain'
+                className='w-fit h-full object-contain'
               />
             </div>
           </div>
@@ -87,13 +108,13 @@ export default function Home() {
           />
         </section>
 
-        <section className='max-w-6xl mx-auto space-y-16'>
-          <h2 className='text-5xl font-bold text-foreground-900 max-w-xl'>
+        <section className='max-w-6xl mx-auto space-y-16 p-4'>
+          <h2 className='text-4xl md:text-5xl font-bold text-foreground-900 max-w-xl'>
             Why Choose KoboWise?
           </h2>
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='bg-primary-600 px-8 py-8 rounded-md col-span-2'>
+            <div className='bg-primary-600 p-8 rounded-md col-span-1 md:col-span-2'>
               <div className='space-y-4'>
                 <div className='space-y-1'>
                   <h3 className='text-xl font-bold text-foreground-50'>
@@ -113,7 +134,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className='bg-neutral-100 px-4 py-8 rounded-md'>
+            <div className='bg-neutral-100 p-8 rounded-md'>
               <div className='space-y-2'>
                 <h3 className='text-xl font-bold text-foreground-900'>
                   Smart Payments
@@ -126,7 +147,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className='bg-neutral-900 px-4 py-8 rounded-md'>
+            <div className='bg-neutral-900 p-8 rounded-md'>
               <div className='space-y-2'>
                 <h3 className='text-xl font-bold text-foreground-50'>
                   Bank-Level Security
@@ -140,9 +161,9 @@ export default function Home() {
           </div>
         </section>
 
-        <section className='space-y-24 bg-gradient-to-br from-primary-900 to-neutral-950 text-foreground-50 py-24'>
-          <div className='max-w-6xl mx-auto space-y-16 flex flex-col items-center'>
-            <h2 className='text-4xl font-bold text-foreground-50 max-w-xl text-center w-full'>
+        <section className='space-y-24 bg-gradient-to-br from-primary-900 via-secondary-900 to-neutral-950 text-foreground-50 py-16 px-4 md:py-24'>
+          <div className='max-w-6xl mx-auto space-y-8 md:space-y-16 flex flex-col items-center'>
+            <h2 className='text-2xl md:text-4xl font-bold text-foreground-50 max-w-xl text-center w-full'>
               Supported Banks & Wallets
             </h2>
 
@@ -307,7 +328,7 @@ export default function Home() {
               </Chip>
             </div>
 
-            <span className='text-foreground-500 text-sm'>
+            <span className='text-foreground-500 text-sm text-center'>
               20+ banks and wallets supported | More being added every month
             </span>
           </div>
@@ -341,13 +362,13 @@ export default function Home() {
             </div>
           </section>
 
-          <section className=' space-y-16 border-t-1 border-[#f0f2f533] border-dashed bg-neutral-950 py-16'>
+          <section className=' space-y-16 border-t-1 border-[#f0f2f533] bg-neutral-950 py-16'>
             <div className='max-w-6xl mx-auto space-y-4'>
-              <div className='flex items-center gap-2 justify-between w-full'>
+              <div className='flex flex-col md:flex-row items-center gap-2 justify-between w-full'>
                 <span className='text-foreground-50 font-bold text-2xl'>
                   KoboWise
                 </span>
-                <div className='flex flex-col items-end gap-2'>
+                <div className='flex flex-col items-center md:items-end gap-2'>
                   <Button
                     isIconOnly
                     variant='flat'
@@ -367,7 +388,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
+              <div className='flex flex-col md:flex-row items-center gap-2 justify-center'>
                 <span className='text-foreground-500'>
                   © {new Date().getFullYear()}
                 </span>
@@ -439,10 +460,10 @@ function FeaturesTabs() {
   }, [activeTab]);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-12 items-start'>
+    <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start p-4'>
       {/* left side - Content */}
-      <div className='space-y-8 col-span-2'>
-        <h2 className='text-5xl font-bold text-foreground-900'>
+      <div className='space-y-8 col-span-1 md:col-span-2'>
+        <h2 className='text-3xl md:text-5xl font-bold text-foreground-900'>
           How smart payment work
         </h2>
 
@@ -511,7 +532,7 @@ function FeaturesTabs() {
       </div>
 
       {/* Right side - Image */}
-      <div className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden'>
+      <div className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden col-span-1 '>
         <div className='absolute inset-0 flex items-center justify-center'>
           <div className='text-8xl'>{features[activeTab].icon}</div>
         </div>
