@@ -534,117 +534,127 @@ function FeaturesTabs() {
   }, [activeTab]);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start p-4'>
-      {/* left side - Content */}
-      <motion.div
-        initial='hidden'
-        whileInView='visible'
-        viewport={{ once: false, margin: "-100px" }}
-        variants={fadeInLeft}
-        className='space-y-8 col-span-1 md:col-span-2'
-      >
-        <motion.h2
-          variants={itemAnimation}
-          className='text-3xl md:text-5xl font-bold text-foreground-900'
-        >
-          How smart payment work
-        </motion.h2>
-
-        {/* Progress bar */}
+    <div className='w-full max-w-full overflow-x-hidden'>
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start px-4 md:p-4'>
+        {/* left side - Content */}
         <motion.div
-          variants={itemAnimation}
-          className='relative w-full h-1 bg-gray-200 rounded-full overflow-hidden'
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: false, margin: "-100px" }}
+          variants={fadeInLeft}
+          className='space-y-8 col-span-1 lg:col-span-2'
+        >
+          <motion.h2
+            variants={itemAnimation}
+            className='text-3xl md:text-5xl font-bold text-foreground-900'
+          >
+            How smart payment work
+          </motion.h2>
+
+          {/* Progress bar */}
+          <motion.div
+            variants={itemAnimation}
+            className='relative w-full h-1 bg-gray-200 rounded-full overflow-hidden'
+          >
+            <motion.div
+              className='h-full bg-primary-600'
+              style={{ width: `${progress}%` }}
+              transition={{ duration: 0.05, ease: "linear" }}
+            />
+          </motion.div>
+
+          {/* Tab list */}
+          <motion.div variants={staggerContainer} className='space-y-2'>
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={itemAnimation}
+                whileHover={{ x: 8 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className='border border-gray-200 rounded-lg overflow-hidden'
+              >
+                <button
+                  onClick={() => setActiveTab(index)}
+                  className={`w-full px-6 py-4 text-left transition-all duration-300 flex items-center justify-between ${
+                    index === activeTab
+                      ? "bg-primary-50 border-l-4 border-primary-600"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <div className='flex items-center gap-3'>
+                    <span className='text-2xl'>{feature.icon}</span>
+                    <h3
+                      className={`text-lg font-semibold ${
+                        index === activeTab
+                          ? "text-primary-900"
+                          : "text-foreground-900"
+                      }`}
+                    >
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <div
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === activeTab ? "bg-primary-600" : "bg-gray-300"
+                    }`}
+                  />
+                </button>
+
+                {/* Accordion content */}
+                {index === activeTab && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeInOut",
+                    }}
+                    className='px-6 pb-6 bg-primary-50 border-t border-primary-100'
+                  >
+                    <div className='pt-4 space-y-4'>
+                      <p className='text-foreground-600 leading-relaxed'>
+                        {feature.description}
+                      </p>
+                      <Button
+                        color='primary'
+                        size='sm'
+                        className='bg-primary-600 hover:bg-primary-700'
+                      >
+                        Learn More
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Right side - Image */}
+        <motion.div
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: false, margin: "-100px" }}
+          variants={fadeInRight}
+          className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden col-span-1'
         >
           <motion.div
-            className='h-full bg-primary-600 transition-all duration-75 ease-linear'
-            style={{ width: `${progress}%` }}
-          />
+            key={activeTab}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut",
+            }}
+            className='absolute inset-0 flex items-center justify-center'
+          >
+            <div className='text-8xl'>{features[activeTab].icon}</div>
+          </motion.div>
+          <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent'></div>
         </motion.div>
-
-        {/* Tab list */}
-        <motion.div variants={staggerContainer} className='space-y-2'>
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={itemAnimation}
-              whileHover={{ x: 10 }}
-              transition={{ duration: 0.2 }}
-              className='border border-gray-200 rounded-lg overflow-hidden'
-            >
-              <button
-                onClick={() => setActiveTab(index)}
-                className={`w-full px-6 py-4 text-left transition-all duration-300 flex items-center justify-between ${
-                  index === activeTab
-                    ? "bg-primary-50 border-l-4 border-primary-600"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                <div className='flex items-center gap-3'>
-                  <span className='text-2xl'>{feature.icon}</span>
-                  <h3
-                    className={`text-lg font-semibold ${
-                      index === activeTab
-                        ? "text-primary-900"
-                        : "text-foreground-900"
-                    }`}
-                  >
-                    {feature.title}
-                  </h3>
-                </div>
-                <div
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === activeTab ? "bg-primary-600" : "bg-gray-300"
-                  }`}
-                />
-              </button>
-
-              {/* Accordion content */}
-              {index === activeTab && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className='px-6 pb-6 bg-primary-50 border-t border-primary-100'
-                >
-                  <div className='pt-4 space-y-4'>
-                    <p className='text-foreground-600 leading-relaxed'>
-                      {feature.description}
-                    </p>
-                    <Button
-                      color='primary'
-                      size='sm'
-                      className='bg-primary-600 hover:bg-primary-700'
-                    >
-                      Learn More
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
-
-      {/* Right side - Image */}
-      <motion.div
-        initial='hidden'
-        whileInView='visible'
-        viewport={{ once: false, margin: "-100px" }}
-        variants={fadeInRight}
-        className='relative h-96 bg-gradient-to-br from-slate-800 to-neutral-900 rounded-2xl overflow-hidden col-span-1 '
-      >
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className='absolute inset-0 flex items-center justify-center'
-        >
-          <div className='text-8xl'>{features[activeTab].icon}</div>
-        </motion.div>
-        <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent'></div>
-      </motion.div>
+      </div>
     </div>
   );
 }
