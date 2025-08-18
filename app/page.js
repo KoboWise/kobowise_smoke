@@ -21,6 +21,7 @@ import { RiInstagramFill } from "@remixicon/react";
 import Link from "next/link";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { useRef } from "react";
+// import { link } from "fs";
 
 // Custom hook for scroll animations
 const useScrollAnimation = () => {
@@ -445,6 +446,8 @@ export default function Home() {
                     <Button
                       isIconOnly
                       variant="flat"
+                      as={Link}
+                      href="https://www.instagram.com/"
                       color="primary"
                       radius="full"
                     >
